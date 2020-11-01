@@ -1,4 +1,6 @@
-# Combat Tracker for role playing games.
+# Taisteluiden pelaamisavustin DnD pöytäroolipeliä varten
+
+(2020 tsoha-projekti)
 
 Avustus ohjelma pyötäroolipelejä (pääasiassa dnd) varten.
  - Käyttäjä voi olla pelaaja, pelin johtaja tai ylläpitäjä
