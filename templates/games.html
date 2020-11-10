@@ -1,0 +1,36 @@
+{% if session.username %}
+
+
+<h3>Games</h3>
+<p>gm</p>
+<ul>
+{% for item in gmgames %}
+<li> {{ item }}
+{% endfor %}
+</ul>
+
+<p>Player</p>
+<ul>
+{% for item in plgames %}
+<li> {{ item }}
+{% endfor %}
+</ul>
+
+<div position=absolute, left=50%>
+<p>Add game</p>
+<form action="/games/add" method="POST">
+<p>Name:<br>
+<input type="text" name="gamename"></p>
+<input type="submit" value="Create game">
+</form>
+</div>
+    
+<p>Olet kirjautunut nimellä {{ session.username }}</p>
+<a href="/logout">Kirjaudu ulos</a>
+
+{% else %}
+<p>you are not logged in</p>
+<form action="/">
+    <input type="submit" value="Go back" />
+</form>
+{% endif %}
