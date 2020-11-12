@@ -1,3 +1,8 @@
+
+{% extends "layout.html" %}
+{% block title %}Welcome{% endblock %}
+{% block content %}
+
 {% if session.username %}
 
 
@@ -24,9 +29,6 @@
 <input type="submit" value="Create game">
 </form>
 </div>
-    
-<p>Olet kirjautunut nimellä {{ session.username }}</p>
-<a href="/logout">Kirjaudu ulos</a>
 
 {% else %}
 <p>you are not logged in</p>
@@ -34,3 +36,5 @@
     <input type="submit" value="Go back" />
 </form>
 {% endif %}
+
+{% endblock %}

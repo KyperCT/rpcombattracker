@@ -23,7 +23,7 @@ def getusergames(username):
 
 
 def login(username, password):
-    sql = "SELECT password FROM users WHERE username=:username"
+    sql = "SELECT password, id FROM users WHERE username=:username"
     result = db.session.execute(sql, {"username": username})
     user = result.fetchone()
     if user is None:
@@ -31,7 +31,7 @@ def login(username, password):
     else:
         hash_value = user[0]
         if check_password_hash(hash_value, password):
-            return username
+            return [user[1], username]
         else:
             return False
 
@@ -41,7 +41,6 @@ def signup(username, password):
     sql = "INSERT INTO users (username,password) VALUES (:username,:password)"
     db.session.execute(sql, {"username": username, "password": pshash})
     db.session.commit()
-    return username
 
 
 def addnewgame(gamename, username):
