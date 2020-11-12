@@ -3,7 +3,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 
 
 def getusergames(username):
-    gamesget = "SELECT g.name, gu.creator FROM games g " \
+    gamesget = "SELECT g.name, gu.creator, g.id FROM games g " \
                "INNER JOIN games_users gu ON g.id = gu.gid " \
                "INNER JOIN users u ON gu.uid = u.id " \
                "WHERE username = :username"
@@ -15,9 +15,9 @@ def getusergames(username):
 
     for game in users_games:
         if game[1]:
-            games_creator.append(game[0])
+            games_creator.append((game[0], game[2]))
         else:
-            games_user.append(game[0])
+            games_user.append((game[0], game[2]))
 
     return [games_creator, games_user]
 
@@ -64,3 +64,33 @@ def addnewgame(gamename, username):
         db.session.commit()
         return True
 
+
+def isingame(user, game):
+    sql = "SELECT u.id FROM users u " \
+          "INNER JOIN games_users gu ON u.id = gu.uid " \
+          "WHERE u.id=:uid AND (gu.gid=:gid OR u.admin = TRUE)"
+    result = db.session.execute(sql, {"gid":game,"uid":user})
+
+    if result.fetchone() is None:
+        return False
+    else:
+        return True
+
+
+def getgame(id):
+    sql = "select g.name, u.username, gu.creator from games g " \
+          "inner join games_users gu on g.id = gu.gid " \
+          "inner join users u on gu.uid = u.id " \
+          "where g.id = :id "
+    result = db.session.execute(sql, {"id": id})
+    data = result.fetchall()
+    output = []
+    users = []
+    for row in data:
+        if row[2]:
+            output.append(row[0])
+            output.append(row[1])
+        else:
+            users.append(row[1])
+    output.append(users)
+    return output

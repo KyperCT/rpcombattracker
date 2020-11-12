@@ -10,14 +10,14 @@
 <p>gm</p>
 <ul>
 {% for item in gmgames %}
-<li> {{ item }}
+    <li><a href="games/{{item[1]}}">{{ item[0] }}</a>
 {% endfor %}
 </ul>
 
 <p>Player</p>
 <ul>
 {% for item in plgames %}
-<li> {{ item }}
+    <li><a href="games/{{item[1]}}">{{ item[0] }}</a>
 {% endfor %}
 </ul>
 
