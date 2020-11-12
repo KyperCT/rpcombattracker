@@ -1,0 +1,14 @@
+<!doctype html>
+<title>RPG Tracker {% block title %}{% endblock %}</title>
+<h3>RPG Combat Tracker</h3>
+{% if session.username %}
+<p>Logged in as: {{ session.username }}</p>
+<a href="/logout">Kirjaudu ulos</a>
+<a href="games">Games</a>
+{% else %}
+<a href="/login">Login</a>
+<a href="/signup">Sign up</a>
+{% endif %}
+<hr>
+{% block content %}{% endblock %}
+<hr>
