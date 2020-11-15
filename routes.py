@@ -113,4 +113,6 @@ def addencounter(id):
     return redirect(f"/games/{id}")
 
 
-
+@app.route("/games/<int:gid>/enc/<int:encid>")
+def encounter(gid,encid):
+    return redirect(f"/games/{gid}")
