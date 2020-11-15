@@ -2,6 +2,22 @@
 
 (2020 tsoha-projekti)
 
+(2. palautus)
+Ohjelmassa voi:
+- luoda käyttäjän
+- kirjautua sisään
+- luoda pelin (jolloin on myös pelin johtaja)
+- etsiä ja liittyä peleihin
+- luoda tapahtumaympäristöjä (eivät vielä tee mitään)
+
+Kaikki tausta työ, joka vaaditaan ohjelman päätoiminnallisuuden kannalta on tehty, mutta itse toiminnallisuudesta ei ole vielä toteutettu mitään.
+
+Testaus: Ohjelmaa voi testata osoitteessa https://rpgcombattracker.herokuapp.com/
+Testausta varten voi luoda uuden käyttäjän tai käyttää valmista käyttäjää
+usrname: user2
+password: password2
+
+(1. palautus)
 Avustus ohjelma pyötäroolipelejä (pääasiassa dnd) varten.
  - Käyttäjä voi olla pelaaja, pelin johtaja tai ylläpitäjä
  - Käyttäjä voi luoda tunnuksen, luoda hahmon, ja liittyä peliin
