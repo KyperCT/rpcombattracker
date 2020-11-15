@@ -71,16 +71,6 @@ def gamesearch():
     return render_template("searchpage.html", searchtext=searchstring, results=searchresults)
 
 
-@app.route("/games/<int:id>")
-def gamepage(id):
-    user = session["userid"]
-    if core.isingame(user,id):
-        gamedata = core.getgame(id)
-        return render_template("gamepage.html", gamename=gamedata[0], creator=gamedata[1], Players=gamedata[2])
-    else:
-        return render_template("error.html", error="You are not authorized to view this page")
-
-
 @app.route("/games/join/<int:id>", methods=["GET", "POST"])
 def joingame(id):
     if request.method == "GET":
@@ -94,3 +84,33 @@ def joingame(id):
         userid = session["userid"]
         core.addusertogame(gameid, userid)
         return redirect(f"/games/{id}")
+
+
+@app.route("/games/<int:id>")
+def gamepage(id):
+    user = session["userid"]
+    if core.isingame(user,id):
+        gamedata = core.getgame(id)
+
+        iscreator = False
+        if session["username"] == gamedata[1]:
+            iscreator = True
+
+        encounters = core.getencounters(id)
+
+        return render_template("gamepage.html", gamename=gamedata[0], creator=gamedata[1], Players=gamedata[2],
+                               iscreator=iscreator, gameid=id, Encounters=encounters)
+    else:
+        return render_template("error.html", error="You are not authorized to view this page")
+
+
+@app.route("/games/<int:id>/addenc", methods=["POST"])
+def addencounter(id):
+    if session["csrf_token"] != request.form["csrf_token"]:
+        abort(403)
+    gameid = id
+    core.newencounter(gameid)
+    return redirect(f"/games/{id}")
+
+
+

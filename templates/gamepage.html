@@ -1,5 +1,5 @@
 {% extends "layout.html" %}
-{% block title %}Login{% endblock %}
+{% block title %}Game {{gameid}}{% endblock %}
 {% block content %}
 <h2>{{ gamename }}</h2>
 <div>
@@ -8,6 +8,26 @@
 <li color=red>{{ creator }}
 {% for item in Players %}
 <li> {{ item }}
+{% endfor %}    
+</ul>
+</div>
+<hr>
+{% if iscreator %}
+<div>
+<p>Create new encounter</p>
+<form action="/games/{{gameid}}/addenc" method="post">
+    <input type="submit" value="New encounter" />
+    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+</form>
+</div>
+{% endif %}
+<hr>
+
+<div>
+<h3>Encounters</h3>
+<ul>
+{% for encid in Encounters %}
+<li> <a href="/games/{{gameid}}/enc/{{encid}}">Encounter #{{encid}}</a>
 {% endfor %}    
 </ul>
 </div>
