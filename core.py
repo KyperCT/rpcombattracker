@@ -22,6 +22,16 @@ def getusergames(username):
     return [games_creator, games_user]
 
 
+def isusernamefree(username):
+    usersql = "SELECT id FROM users WHERE username=:username"
+    result = db.session.execute(usersql, {"username": username})
+    user = result.fetchone()
+    if user is None:
+        return True
+    else:
+        return False
+
+
 def login(username, password):
     sql = "SELECT password, id FROM users WHERE username=:username"
     result = db.session.execute(sql, {"username": username})
@@ -41,6 +51,7 @@ def signup(username, password):
     sql = "INSERT INTO users (username,password) VALUES (:username,:password)"
     db.session.execute(sql, {"username": username, "password": pshash})
     db.session.commit()
+
 
 
 def addnewgame(gamename, username):
@@ -94,3 +105,14 @@ def getgame(id):
             users.append(row[1])
     output.append(users)
     return output
+
+def searchgame(userinput):
+    sql = "SELECT name, id FROM games WHERE name LIKE :userinput"
+    result = db.session.execute(sql, {"userinput": f"%{userinput}%"})
+    return result.fetchall()
+
+
+def addusertogame(gameid: int,userid: int):
+    sql = "INSERT INTO games_users (gid, uid) VALUES (:gid, :uid)"
+    db.session.execute(sql, {"gid": gameid, "uid": userid})
+    db.session.commit()

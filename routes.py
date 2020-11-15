@@ -1,5 +1,6 @@
 from app import app
-from flask import render_template, request, session, redirect
+from flask import render_template, request, session, redirect, abort
+from os import urandom
 import core
 
 @app.route("/")
@@ -25,6 +26,7 @@ def login():
         else:
             session["userid"] = getlogin[0]
             session["username"] = getlogin[1]
+            session["csrf_token"] = urandom(16).hex()
             return redirect("/games")
 
 
@@ -36,11 +38,14 @@ def signup():
     if request.method == "POST":
         username = request.form["username"]
         password = request.form["password"]
-        core.signup(username, password)
-        userid = core.login(username, password)
-        session["userid"] = userid[0]
-        session["username"] = userid[1]
-        return redirect("/games")
+        if core.isusernamefree(username):
+            core.signup(username, password)
+            userid = core.login(username, password)
+            session["userid"] = userid[0]
+            session["username"] = userid[1]
+            return redirect("/games")
+        else:
+            return render_template("error.html", error="Username is already in use")
 
 
 @app.route("/logout")
@@ -59,6 +64,13 @@ def addgame():
         return redirect("/")
 
 
+@app.route("/games/search", methods=["GET"])
+def gamesearch():
+    searchstring = request.args["searchtext"]
+    searchresults = core.searchgame(searchstring)
+    return render_template("searchpage.html", searchtext=searchstring, results=searchresults)
+
+
 @app.route("/games/<int:id>")
 def gamepage(id):
     user = session["userid"]
@@ -67,3 +79,18 @@ def gamepage(id):
         return render_template("gamepage.html", gamename=gamedata[0], creator=gamedata[1], Players=gamedata[2])
     else:
         return render_template("error.html", error="You are not authorized to view this page")
+
+
+@app.route("/games/join/<int:id>", methods=["GET", "POST"])
+def joingame(id):
+    if request.method == "GET":
+        gamedata = core.getgame(id)
+        return render_template("joinpage.html", gamename=gamedata[0], gameid=id)
+
+    if request.method == "POST":
+        if session["csrf_token"] != request.form["csrf_token"]:
+            abort(403)
+        gameid = id
+        userid = session["userid"]
+        core.addusertogame(gameid, userid)
+        return redirect(f"/games/{id}")

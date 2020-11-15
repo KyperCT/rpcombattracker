@@ -1,0 +1,20 @@
+{% extends "layout.html" %}
+{% block title %}Welcome{% endblock %}
+{% block content %}
+
+<div>
+<p>Find game</p>
+<form action="/games/search" method="GET">
+<p>Name:<br>
+<input type="text" name="searchtext"></p>
+<input type="submit" value="Search">
+</form>  
+</div>
+<br>Results for: {{ searchtext }}
+<ul>
+{% for result in results %}
+    <li>{{result[0]}} <a href="/games/join/{{result[1]}}">Join</a>
+{% endfor %}
+</ul>
+
+{% endblock %}
