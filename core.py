@@ -1,6 +1,6 @@
 from db import db
 from werkzeug.security import check_password_hash, generate_password_hash
-
+from sqlalchemy import exc
 
 def getusergames(username):
     gamesget = "SELECT g.name, gu.creator, g.id FROM games g " \
@@ -53,7 +53,6 @@ def signup(username, password):
     db.session.commit()
 
 
-
 def addnewgame(gamename, username):
     insertgame = "INSERT INTO games (name) VALUES (:name)"
     db.session.execute(insertgame, {"name": gamename})
@@ -62,7 +61,7 @@ def addnewgame(gamename, username):
     userget = "SELECT id FROM users WHERE username=:username"
     ugetresult = db.session.execute(userget, {"username": username})
     uid = ugetresult.fetchone()
-    gameidget = "SELECT id FROM games WHERE name=:name"
+    gameidget = "SELECT id FROM games WHERE name=:name ORDER BY id DESC LIMIT 1"
     ggetresult = db.session.execute(gameidget, {"name": gamename})
     gid = ggetresult.fetchone()
     if uid is None:
@@ -114,8 +113,11 @@ def searchgame(userinput):
 
 def addusertogame(gameid: int,userid: int):
     sql = "INSERT INTO games_users (gid, uid) VALUES (:gid, :uid)"
-    db.session.execute(sql, {"gid": gameid, "uid": userid})
-    db.session.commit()
+    try:
+        db.session.execute(sql, {"gid": gameid, "uid": userid})
+        db.session.commit()
+    except exc.IntegrityError:
+        raise ValueError
 
 
 def newencounter(gameid):

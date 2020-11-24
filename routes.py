@@ -82,7 +82,10 @@ def joingame(id):
             abort(403)
         gameid = id
         userid = session["userid"]
-        core.addusertogame(gameid, userid)
+        try:
+            core.addusertogame(gameid, userid)
+        except ValueError:
+            return render_template("error.html", error="You can't join a game that you're already in")
         return redirect(f"/games/{id}")
 
 
