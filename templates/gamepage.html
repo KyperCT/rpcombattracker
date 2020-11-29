@@ -5,9 +5,9 @@
 <div>
 <br>Members
 <ul>
-<li color=red>{{ creator }}
+<li color=red>{{ creator }} - GM
 {% for item in Players %}
-<li> {{ item }}
+<li> {{ item[0] }} - {{ item[1] }}
 {% endfor %}    
 </ul>
 </div>
@@ -17,6 +17,15 @@
 <p>Create new encounter</p>
 <form action="/games/{{gameid}}/addenc" method="post">
     <input type="submit" value="New encounter" />
+    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+</form>
+</div>
+{% else %}
+<div>
+<p>Name your character</p>
+<form action="/games/{{gameid}}" method="post">
+    <input type="text" name="CharName"/>
+    <input type="submit" value="Enter" />
     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
 </form>
 </div>

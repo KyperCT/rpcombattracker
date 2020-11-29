@@ -1,0 +1,47 @@
+<!doctype html>
+<head>
+<script type="text/javascript">
+<!--
+
+var counter = 0;
+
+function moreFields() {
+	counter++;
+	var newFields = document.getElementById('readroot').cloneNode(true);
+	newFields.id = '';
+	newFields.style.display = 'block';
+	var newField = Array.from(newFields.childNodes);
+    var newerField = Array.from(newFields.childNodes);
+    for (var i=0;i<newField.length;i++) {
+		var field = newField[i]
+		if (field.childNodes)
+            var fieldNodes = Array.from(field.childNodes)
+            for (var i1=0;i1<fieldNodes.length;i1++) {
+                newerField.push(fieldNodes[i1]);
+            };
+	}
+	for (var i=0;i<newerField.length;i++) {
+		var theName = newerField[i].name
+		if (theName)
+			newerField[i].name = theName + counter;
+	}
+	var insertHere = document.getElementById('writeroot');
+	insertHere.parentNode.insertBefore(newFields,insertHere);
+}
+
+// -->
+</script>
+</head>
+
+<div id="readroot" style="display: none">
+    {% block repeatingform %}{% endblock %}
+</div>
+
+<form method="post" action="{% block formaction %}{% endblock %}">
+
+	<span id="writeroot"></span>
+    
+    <button type="button" onclick="moreFields()">{% block valueMoreField %}{% endblock %}</button>
+    {% block staticform %}{% endblock %}
+
+</form>

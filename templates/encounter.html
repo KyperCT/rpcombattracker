@@ -1,0 +1,37 @@
+{% extends "layout.html" %}
+{% block title %}Encounter{% endblock %}
+{% block content %}
+
+
+{% if phase0 %}
+    {% if iscreator %}
+    <h2>Roll initiative for monsters</h2>
+    {% include "InitForm.html" %}
+    {% else %}
+    <h2>Roll initiative</h2>
+    <form action="/games/{{gid}}/enc/{{encid}}" method="POST">
+        <p>I rolled:<br>
+        <input type="number" name="Initnum"></p>
+        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+        <input type="hidden" name="post_type" value="1">
+        <input type="submit" value="Enter">
+    </form>
+    {% endif %}
+{% elif phase1 %}
+    <table>
+        <tr>
+            <th>Initiatve</th>
+            <th>Character</th>
+        </tr>
+        {% for row in initdata %}
+        <tr>
+            <td>{{ row[0] }}</td>
+            <td>{{ row[1] }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+{% endif %}
+
+
+{% endblock %}

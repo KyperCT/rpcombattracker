@@ -1,0 +1,15 @@
+{% extends "ExtendForm.html" %}
+{% block formaction %}/games/{{gid}}/enc/{{encid}}{% endblock %}
+{% block valueMoreField %}Add aditional monster{% endblock %}
+{% block repeatingform %}
+<p>Monster
+<input type="text" name="Monstername" /></p>
+<p>Initiative
+<input type="number" name="Initnum" /></p>
+
+{% endblock %}
+{% block staticform %}
+<input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+	<input type="submit" value="Submit" />
+<input type="hidden" name="post_type" value="0">
+{% endblock %}

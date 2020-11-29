@@ -2,6 +2,7 @@ from db import db
 from werkzeug.security import check_password_hash, generate_password_hash
 from sqlalchemy import exc
 
+
 def getusergames(username):
     gamesget = "SELECT g.name, gu.creator, g.id FROM games g " \
                "INNER JOIN games_users gu ON g.id = gu.gid " \
@@ -88,7 +89,7 @@ def isingame(user, game):
 
 
 def getgame(id):
-    sql = "select g.name, u.username, gu.creator from games g " \
+    sql = "select g.name, u.username, gu.creator, gu.charname from games g " \
           "inner join games_users gu on g.id = gu.gid " \
           "inner join users u on gu.uid = u.id " \
           "where g.id = :id "
@@ -101,9 +102,10 @@ def getgame(id):
             output.append(row[0])
             output.append(row[1])
         else:
-            users.append(row[1])
+            users.append((row[1], row[3]))
     output.append(users)
     return output
+
 
 def searchgame(userinput):
     sql = "SELECT name, id FROM games WHERE name LIKE :userinput"
@@ -118,6 +120,12 @@ def addusertogame(gameid: int,userid: int):
         db.session.commit()
     except exc.IntegrityError:
         raise ValueError
+
+
+def namecharacter(gameid: int, userid: int, charname: str):
+    sql = "UPDATE games_users SET charname = :charname WHERE gid = :gid AND uid = :uid"
+    db.session.execute(sql, {"charname": charname, "gid": gameid, "uid": userid})
+    db.session.commit()
 
 
 def newencounter(gameid):
@@ -139,3 +147,48 @@ def getencounters(gameid: int):
     result = db.session.execute(sql, {"gameid": gameid})
     encids = map(lambda item: item[0], result.fetchall())
     return list(encids)
+
+
+def geteid(gameid, encid):
+    sql = "select eid from games_encounters where gameid = :gid AND encounterid = :encid"
+    result = db.session.execute(sql, {"gid": gameid, "encid": encid})
+    eid = result.fetchone()
+    return eid[0]
+
+
+def addinitiative(gameid: int, encid: int, uid: int, initnum: int):
+    eid = geteid(gameid, encid)
+    try:
+        insertsql = "insert into initiative (eid, uid, initnum) values (:eid, :uid, :initnum)"
+        db.session.execute(insertsql, {"eid": eid, "uid": uid, "initnum": initnum})
+        db.session.commit()
+    except exc.IntegrityError:
+        updatesql = "update initiative set initnum = :initnum where eid = :eid AND uid = :uid"
+        db.session.execute(updatesql, {"eid": eid, "uid": uid, "initnum": initnum})
+        db.session.commit()
+
+
+def addmonstersinit(monsterlist, initiativelist, gameid, encid):
+    eid = geteid(gameid, encid)
+    fulllist = [(monsterlist[x], initiativelist[x]) for x in monsterlist]
+    sql = "insert into monsters_initiative (eid, monstername, initiative) values (:eid, :mname, :initnum)"
+    for monster in fulllist:
+        db.session.execute(sql, {"eid": eid, "mname": monster[0], "initnum": monster[1]})
+    db.session.commit()
+
+
+def getinitdata(gid, encid):
+    sql = "select initnum, charname from initiative i " \
+          "inner join games_encounters ge on i.eid = ge.eid " \
+          "inner join games_users gu on (ge.gameid = gu.gid AND i.uid = gu.uid) " \
+          "where gu.gid = :gid and ge.encounterid = :encid"
+    result = db.session.execute(sql, {"gid": gid, "encid": encid})
+    data = result.fetchall()
+    monstersql = "select initiative, monstername from monsters_initiative i " \
+                 "inner join games_encounters ge on i.eid = ge.eid " \
+                 "where ge.gameid = :gid and ge.encounterid = :encid"
+    monsterresult = db.session.execute(monstersql, {"gid": gid, "encid": encid})
+    data.extend(monsterresult.fetchall())
+
+    return list(sorted(data, key=lambda x: x[0], reverse=True))
+
