@@ -1,7 +1,17 @@
+import encounter
+import game
+import initiative
+import power
+import user
 from app import app
-from flask import render_template, request, session, redirect, abort
+from flask import render_template, request, session, redirect, abort, url_for, flash
 from os import urandom
-import core
+
+
+
+@app.route("/stylesheet")
+def stylesheet():
+    return redirect(str(url_for('static', filename='stylesheet.css')) + f"?{urandom(2)}")
 
 
 @app.route("/")
@@ -11,7 +21,7 @@ def index():
 
 @app.route("/games")
 def games():
-    usergames = core.getusergames(session["username"])
+    usergames = game.getusergames(session["username"])
     return render_template("games.html", gmgames=usergames[0], plgames=usergames[1])
 
 
@@ -21,7 +31,7 @@ def login():
         return render_template("login.html")
 
     if request.method == "POST":
-        getlogin = core.login(request.form["username"], request.form["password"])
+        getlogin = user.login(request.form["username"], request.form["password"])
         if getlogin is False:
             return redirect("/")
         else:
@@ -39,9 +49,9 @@ def signup():
     if request.method == "POST":
         username = request.form["username"]
         password = request.form["password"]
-        if core.isusernamefree(username):
-            core.signup(username, password)
-            userid = core.login(username, password)
+        if user.isusernamefree(username):
+            user.signup(username, password)
+            userid = user.login(username, password)
             session["userid"] = userid[0]
             session["username"] = userid[1]
             return redirect("/games")
@@ -58,7 +68,7 @@ def logout():
 
 @app.route("/games/add", methods=["POST"])
 def addgame():
-    newgame = core.addnewgame(request.form["gamename"], session["username"])
+    newgame = game.addnewgame(request.form["gamename"], session["username"])
     if newgame:
         return redirect("/games")
     else:
@@ -68,14 +78,14 @@ def addgame():
 @app.route("/games/search", methods=["GET"])
 def gamesearch():
     searchstring = request.args["searchtext"]
-    searchresults = core.searchgame(searchstring)
+    searchresults = game.searchgame(searchstring)
     return render_template("searchpage.html", searchtext=searchstring, results=searchresults)
 
 
 @app.route("/games/join/<int:id>", methods=["GET", "POST"])
 def joingame(id):
     if request.method == "GET":
-        gamedata = core.getgame(id)
+        gamedata = game.getgame(id)
         return render_template("joinpage.html", gamename=gamedata[0], gameid=id)
 
     if request.method == "POST":
@@ -84,7 +94,7 @@ def joingame(id):
         gameid = id
         userid = session["userid"]
         try:
-            core.addusertogame(gameid, userid)
+            game.addusertogame(gameid, userid)
         except ValueError:
             return render_template("error.html", error="You can't join a game that you're already in")
         return redirect(f"/games/{id}")
@@ -94,8 +104,8 @@ def joingame(id):
 def gamepage(id):
     if request.method == "GET":
         user = session["userid"]
-        if core.isingame(user,id):
-            gamedata = core.getgame(id)
+        if game.isingame(user, id):
+            gamedata = game.getgame(id)
 
             if session["username"] == gamedata[1]:
                 iscreator = True
@@ -104,7 +114,7 @@ def gamepage(id):
                 iscreator = False
                 session[f"iscreator{str(id)}"] = False
 
-            encounters = core.getencounters(id)
+            encounters = encounter.getencounters(id)
 
             return render_template("gamepage.html", gamename=gamedata[0], creator=gamedata[1], Players=gamedata[2],
                                     iscreator=iscreator, gameid=id, Encounters=encounters)
@@ -115,7 +125,7 @@ def gamepage(id):
         if session["csrf_token"] != request.form["csrf_token"]:
             abort(403)
         charname = request.form["CharName"]
-        core.namecharacter(id, session["userid"], charname)
+        game.namecharacter(id, session["userid"], charname)
         return redirect(f"/games/{id}", code=303)
 
 
@@ -124,7 +134,7 @@ def addencounter(id):
     if session["csrf_token"] != request.form["csrf_token"]:
         abort(403)
     gameid = id
-    core.newencounter(gameid)
+    encounter.newencounter(gameid)
     return redirect(f"/games/{id}")
 
 
@@ -137,9 +147,10 @@ def encounter(gid,encid):
             return render_template("encounter.html", gid=gid, encid=encid, phase0=True, phase1=False,
                                    iscreator=session[f"iscreator{str(gid)}"])
         if phase == 1:
-            initdata = core.getinitdata(gid, encid)
+            initdata = initiative.getinitdata(gid, encid)
+            powerdata = power.getexpandedpowers(session["userid"], gid)
             return render_template("encounter.html", gid=gid, encid=encid, phase0=False, phase1=True,
-                                   iscreator=session[f"iscreator{str(gid)}"], initdata=initdata)
+                                   iscreator=session[f"iscreator{str(gid)}"], initdata=initdata, powers=powerdata)
 
     if request.method == "POST":
         if session["csrf_token"] != request.form["csrf_token"]:
@@ -148,15 +159,76 @@ def encounter(gid,encid):
         if request.form["post_type"] == "0":
             monsternames = {x[-1]: request.form[x] for x in request.form if x[0][0] == "M"}
             initiatives = {x[-1]: request.form[x] for x in request.form if x[0][0] == "I"}
-            core.addmonstersinit(monsternames, initiatives, gid, encid)
+            initiative.addmonstersinit(monsternames, initiatives, gid, encid)
 
             session[f"encphase{str(gid)}{str(encid)}{session['userid']}"] = 1
             return redirect(f"/games/{gid}/enc/{encid}", code=303)
 
         if request.form["post_type"] == "1":
             initnum = request.form["Initnum"]
-            core.addinitiative(gid, encid, session["userid"], initnum)
+            initiative.addinitiative(gid, encid, session["userid"], initnum)
 
             session[f"encphase{str(gid)}{str(encid)}{session['userid']}"] = 1
             return redirect(f"/games/{gid}/enc/{encid}", code=303)
 
+
+@app.route("/powers")
+def powers():
+    return render_template("powers.html")
+
+
+@app.route("/powers/powersearch")
+def powersearch():
+    searchstring = request.args["searchtext"]
+    searchresults = power.searchpower(searchstring)
+    return render_template("powersearch.html", searchtext=searchstring, results=searchresults)
+
+
+@app.route("/powers/addpower", methods=["POST", "GET"])
+def addpower():
+    if request.method == "GET":
+        return render_template("addpower.html")
+
+    if request.method == "POST":
+        if session["csrf_token"] != request.form["csrf_token"]:
+            abort(403)
+        power.addpower(request.form["powername"], request.form["powertext"])
+        flash('Power Added!')
+        return redirect("/powers")
+
+
+@app.route("/powers/<int:pid>")
+def powerdesc(pid):
+    powerdata = power.getpower(pid)
+    return render_template("powerdesc.html", powerdata=powerdata)
+
+
+@app.route("/games/<int:gid>/addpower/<int:uid>", methods=["POST", "GET"])
+def playerpower(gid, uid):
+    if request.method == "GET":
+        return render_template("playerpower.html", gid=gid, uid=uid)
+
+    if request.method == "POST":
+        if session["csrf_token"] != request.form["csrf_token"]:
+            abort(403)
+        power.addplayerpower(request.form["powerid"], gid, uid)
+        flash('Power Added!')
+        return redirect(f"/games/{gid}")
+
+
+@app.route("/games/<int:gid>/powershow")
+def showpower(gid):
+    searchid = request.args["id"]
+    searchresults = power.getuserpower(searchid, gid)
+    return render_template("showpower.html", results=searchresults, uid=searchid, gid=gid)
+
+
+@app.route("/games/<int:gid>/rmpower", methods=["POST"])
+def rmpower(gid):
+
+    if request.method == "POST":
+        if session["csrf_token"] != request.form["csrf_token"]:
+            abort(403)
+        power.rmplayerpower(request.form["pid"], gid, request.form["uid"])
+        flash('Power Removed')
+        return redirect(f"/games/{gid}/powershow?id={request.form['uid']}")

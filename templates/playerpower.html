@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+{% block title %}Game {{gameid}}{% endblock %}
+{% block content %}
+<div class=container>
+
+<div style="width:25%;">
+<p>Search for powers on right side, copy power number here to add it to your character.</p>
+<p>Add power</p>
+<form action="/games/{{gid}}/addpower/{{uid}}" method="POST">
+<p>Power ID:<br>
+<input type="number" name="powerid"></p>
+<input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+<p><input type="submit" value="Add power"></p>
+</form>
+</div>
+
+<div>
+<h2>Search powers</h2>
+<iframe src="/powers/powersearch?searchtext=">Search</iframe>
+</div>
+</div>
+{% endblock %}

@@ -1,0 +1,17 @@
+{% extends "layout.html" %}
+{% block title %}Search{% endblock %}
+{% block content %}
+
+<div>
+<p>Add power</p>
+<form action="/powers/addpower" method="POST">
+<p>Name:<br>
+<input type="text" name="powername"></p>
+<p>Description:<br></p>
+<textarea name="powertext" rows="10" cols="50"></textarea>
+<input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+<p><input type="submit" value="Add power"></p>
+</form>
+</div>
+
+{% endblock %}

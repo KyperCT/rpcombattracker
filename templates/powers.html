@@ -1,0 +1,21 @@
+
+{% extends "layout.html" %}
+{% block title %}Powers{% endblock %}
+{% block content %}
+
+{% if session.username %}
+
+<h2>Add power</h2>
+<a href="/powers/addpower">Create new power</a>
+
+<h2>Search powers</h2>
+<iframe src="/powers/powersearch?searchtext=">Search</iframe>
+
+{% else %}
+<p>you are not logged in</p>
+<form action="/">
+    <input type="submit" value="Go back" />
+</form>
+{% endif %}
+
+{% endblock %}

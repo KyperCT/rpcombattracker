@@ -7,20 +7,23 @@
 
 
 <h3>Games</h3>
+<div class="left">
 <p>gm</p>
 <ul>
 {% for item in gmgames %}
     <li><a href="games/{{item[1]}}">{{ item[0] }}</a>
 {% endfor %}
 </ul>
-
+</div>
+<div class="center">
 <p>Player</p>
 <ul>
 {% for item in plgames %}
     <li><a href="games/{{item[1]}}">{{ item[0] }}</a>
 {% endfor %}
 </ul>
-
+</div>
+    
 <div>
 <p>Add game</p>
 <form action="/games/add" method="POST">

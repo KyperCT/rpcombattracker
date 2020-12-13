@@ -30,7 +30,17 @@
         </tr>
         {% endfor %}
     </table>
+{% if not iscreator %}
+<div class=container-wrap>
 
+{% for item in powers %}
+<div class=powerdisp>
+    <h4>{{item[0]}}</h4>
+    <p>{{item[1]}}</p>
+    </div>
+{% endfor %}
+</div>
+{% endif %}
 {% endif %}
 
 

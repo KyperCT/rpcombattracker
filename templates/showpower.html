@@ -1,0 +1,11 @@
+<ul>
+{% for result in results %}
+    <li>{{result[1]}}: <a href="/powers/{{result[1]}}">{{result[0]}}</a>
+        <form action="/games/{{gid}}/rmpower" method="POST">
+        <input type="hidden" name="uid" value="{{uid}}">
+        <input type="hidden" name="pid" value="{{result[1]}}">
+        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+        <input type="submit" value="remove">
+        </form></li>
+{% endfor %}
+</ul>

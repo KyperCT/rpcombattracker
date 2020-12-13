@@ -1,14 +1,32 @@
-<!doctype html>
+<!doctype html5>
+<head>
+<link rel="stylesheet" href="/stylesheet">
 <title>RPG Tracker {% block title %}{% endblock %}</title>
+</head>
+<body>
 <h3>RPG Combat Tracker</h3>
 {% if session.username %}
 <p>Logged in as: {{ session.username }}</p>
 <a href="/logout">Kirjaudu ulos</a>
 <a href="/games">Games</a>
+<a href="/powers">Powers</a>
 {% else %}
 <a href="/login">Login</a>
 <a href="/signup">Sign up</a>
 {% endif %}
+    
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <hr>
+    <ul class=flashes>
+    {% for message in messages %}
+      <li>{{ message }}</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+    
 <hr>
 {% block content %}{% endblock %}
 <hr>
+</body>

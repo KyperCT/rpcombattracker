@@ -1,11 +1,13 @@
 {% extends "layout.html" %}
 {% block title %}Game {{gameid}}{% endblock %}
 {% block content %}
-<h2>{{ gamename }}</h2>
+<div class=container>
+<div style="width:25%;">
+    <h2>{{ gamename }}</h2>
 <div>
 <br>Members
 <ul>
-<li color=red>{{ creator }} - GM
+<li>{{ creator }} - GM
 {% for item in Players %}
 <li> {{ item[0] }} - {{ item[1] }}
 {% endfor %}    
@@ -14,7 +16,7 @@
 <hr>
 {% if iscreator %}
 <div>
-<p>Create new encounter</p>
+<h3>Create new encounter</h3>
 <form action="/games/{{gameid}}/addenc" method="post">
     <input type="submit" value="New encounter" />
     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
@@ -22,7 +24,7 @@
 </div>
 {% else %}
 <div>
-<p>Name your character</p>
+<h3>Name your character</h3>
 <form action="/games/{{gameid}}" method="post">
     <input type="text" name="CharName"/>
     <input type="submit" value="Enter" />
@@ -40,4 +42,16 @@
 {% endfor %}    
 </ul>
 </div>
+</div>
+    
+<div>
+{% if not iscreator %}
+<h2>Powers</h2>
+<p><a href="/games/{{gameid}}/addpower/{{session.userid}}">Add powers</a></p>
+<iframe src="/games/{{gameid}}/powershow?id={{session.userid}}"></iframe>
+{% endif %}
+</div>
+</div>
 {% endblock %}
+
+
