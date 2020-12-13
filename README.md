@@ -2,6 +2,30 @@
 
 (2020 tsoha-projekti)
 
+(Lopullinen palautus)
+
+Ohjelmassa voi:
+ - tehdä kaiken, mitä viime palautuksessa pystyi
+ - Pelin johtaja voi poistaa omia hahmojaan encounterin initiative listasta
+ - "Powers" -sivulla voi lisätä vomia, joita pelaajat voi käyttää
+ - pelin sivulla pelaaja voi lisätä itselleen voimia, ja katsoa mitä voimia hahmollaan on pienehköstä menusta
+ - Kun initiative arvot on syötetty, pelaaja näkee encounter sivulla kaikki voimansa selkeästi
+ 
+Ohjelma on käytettävissä sen alkuperäiseen tarkoitukseen, eli projekti jossain määrin onnistui. Lopussa tuli paljon ongelmia nettisivujen kanssa, niin nettisivujen estetiikka on "nostalginen". Käyttöliittymä on toivottavasti riittävän selkeä siitä riippumatta. Sivujen toiminnallisuus on siis:
+ - pelaajan perpektiivistä:
+ 
+Ohjelmassa voi liittyä pelin johtajan peliympäristöön, lisätä hahmolle olennaiset voimat, ja sitten taistelutilanteissa syöttää pelin johtajan luomalle encounter sivulle initiativen, jonka jälkeen pelaaja näkee milloin hänen vuoro on suhteessa muihin ja mitä hänen voimat ovat.
+ - Pelin johtajan perspektiivistä:
+ 
+Ohjelmassa voi luoda peliympäristön, jonne pelaajat voivat liittyä. Kun tulee taistelun aika, voi johtaja lisätä uuden encounterin, jonne hän voi lisätä kaikkien tapahtuman vihollisten initiativet. Tämän jälkeen pelin johtaja näkee liikumisvuoron. Johtaja voi myös poistaa omia hahmojaan listasta, niin hän voi selkeästi seurata taistelua.
+
+ - voimista:
+
+Voimien lisäämisen voisi periaatteessa tehdä johtaja tai pelaaja. Käyttäjät voivat lisätä voimia, sillä roolipeleissä on satoja voimia, ja usein pelin johtaja saattaa keksiä itse uusia. On siis käytännöllistä, että ohjelman käyttäjät voivat itse lisätä uusia voimia hakemistoon.
+
+Testaus: Ohjelmaa voi testata osoitteessa https://rpgcombattracker.herokuapp.com/
+Testausta varten voi luoda uuden käyttäjän sign up napilla. Suosittelen luomaan 2 käyttäjää, niin voi kokeilla peliä pelaajan ja sen luojan perspektiivistä. Joitakin voimia on jo lisätty, niin testausta varten ei uusia tarvitse paljon luoda. 
+
 (3. palautus)
 Ohjelmassa voi:
  - tehdä kaiken, mitä viime palautuksessa pystyi
