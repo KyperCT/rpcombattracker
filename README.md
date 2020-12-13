@@ -2,6 +2,19 @@
 
 (2020 tsoha-projekti)
 
+(3. palautus)
+Ohjelmassa voi:
+ - tehdä kaiken, mitä viime palautuksessa pystyi
+ - pelin sivuilla voi nimetä hahmonsa, jos on pelaaja
+ - "encounter" alueella voi laittaa numeron (käytössä olisi fyysisesti heitetty nopan heitto) hahmon initiative arvoksi
+ - Pelin luoja voi lisätä vihollisia, ja merkitä niiden 'initiative' arvot
+ - arvon lisäämisen jälkeen näkyy lista, jossa on kaikki 'encounter':iin osallistuvien 'initiative' arvot
+
+Ohjelma on hieman palautuksesta jäljessä. Ohjelmalla on käytännössä 2 tärkeää toimintoa: Näyttää initiative arvot, ja näyttää pelaajille mitä he voivat tehdä. Näistä initiative on toteutettu, toinen vaatii vielä työtä (ja mitään testattavaa toisesta ei vielä ole).
+
+Testaus: Ohjelmaa voi testata osoitteessa https://rpgcombattracker.herokuapp.com/
+Testausta varten voi luoda uuden käyttäjän sign up napilla. Suosittelen luomaan 2 käyttäjää, niin voi kokeilla peliä pelaajan ja sen luojan perspektiivistä
+
 (2. palautus)
 Ohjelmassa voi:
 - luoda käyttäjän
@@ -11,11 +24,6 @@ Ohjelmassa voi:
 - luoda tapahtumaympäristöjä (eivät vielä tee mitään)
 
 Kaikki tausta työ, joka vaaditaan ohjelman päätoiminnallisuuden kannalta on tehty, mutta itse toiminnallisuudesta ei ole vielä toteutettu mitään.
-
-Testaus: Ohjelmaa voi testata osoitteessa https://rpgcombattracker.herokuapp.com/
-Testausta varten voi luoda uuden käyttäjän tai käyttää valmista käyttäjää
-usrname: user2
-password: password2
 
 (1. palautus)
 Avustus ohjelma pyötäroolipelejä (pääasiassa dnd) varten.
