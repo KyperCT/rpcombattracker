@@ -26,7 +26,17 @@
         {% for row in initdata %}
         <tr>
             <td>{{ row[0] }}</td>
-            <td>{{ row[1] }}</td>
+            <td>{{ row[1] }}
+            {% if row[3] %}
+                <form action="/games/enc/rmmonster" method="POST">
+                <input type="hidden" name="mid" value="{{row[2]}}">
+                <input type="hidden" name="gid" value="{{gid}}">
+                <input type="hidden" name="eid" value="{{encid}}">
+                <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+                <input type="submit" value="Kill">
+                </form>
+                {% endif %}
+            </td>
         </tr>
         {% endfor %}
     </table>
@@ -42,6 +52,5 @@
 </div>
 {% endif %}
 {% endif %}
-
 
 {% endblock %}

@@ -138,7 +138,7 @@ def addencounter(id):
 
 
 @app.route("/games/<int:gid>/enc/<int:encid>", methods=["POST", "GET"])
-def encounter(gid,encid):
+def encounters(gid,encid):
     if request.method == "GET":
         try:
             phase = session[f"encphase{str(gid)}{str(encid)}{session['userid']}"]
@@ -231,3 +231,11 @@ def rmpower(gid):
         power.rmplayerpower(request.form["pid"], gid, request.form["uid"])
         flash('Power Removed')
         return redirect(f"/games/{gid}/powershow?id={request.form['uid']}")
+
+
+@app.route("/games/enc/rmmonster", methods=["POST"])
+def rmmonster():
+    if session["csrf_token"] != request.form["csrf_token"]:
+        abort(403)
+    initiative.rmmonster(request.form["mid"])
+    return redirect(f"/games/{request.form['gid']}/enc/{request.form['eid']}")

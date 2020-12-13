@@ -33,10 +33,21 @@ def getinitdata(gid, encid):
           "where gu.gid = :gid and ge.encounterid = :encid"
     result = db.session.execute(sql, {"gid": gid, "encid": encid})
     data = result.fetchall()
-    monstersql = "select initiative, monstername from monsters_initiative i " \
+    monstersql = "select i.initiative, i.monstername, i.id from monsters_initiative i " \
                  "inner join games_encounters ge on i.eid = ge.eid " \
                  "where ge.gameid = :gid and ge.encounterid = :encid"
     monsterresult = db.session.execute(monstersql, {"gid": gid, "encid": encid})
-    data.extend(monsterresult.fetchall())
+    mresult = []
+    for row in monsterresult:
+        mresult.append(list(row))
+    for row in mresult:
+        row.append(True)
+    data.extend(mresult)
 
     return list(sorted(data, key=lambda x: x[0], reverse=True))
+
+
+def rmmonster(mid):
+    sql = "delete from monsters_initiative where id = :mid"
+    db.session.execute(sql, {"mid": mid})
+    db.session.commit()
