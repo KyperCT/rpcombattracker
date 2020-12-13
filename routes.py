@@ -8,10 +8,9 @@ from flask import render_template, request, session, redirect, abort, url_for, f
 from os import urandom
 
 
-
 @app.route("/stylesheet")
 def stylesheet():
-    return redirect(str(url_for('static', filename='stylesheet.css')) + f"?{urandom(2)}")
+    return redirect(url_for('static', filename='stylesheet.css'))
 
 
 @app.route("/")
